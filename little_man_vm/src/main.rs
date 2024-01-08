@@ -6,8 +6,8 @@ use std::{
     process::exit,
 };
 
-mod lm_vm;
-use lm_vm::LittleManVirtualMachine;
+mod vm;
+use vm::LittleManVirtualMachine;
 
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
