@@ -11,8 +11,8 @@ use vm::LittleManVirtualMachine;
 
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("Usage: {} <filename>", args[0]);
+    if args.len() < 2 {
+        eprintln!("Usage: {} <filename> <space delimited values for input>", args[0]);
         exit(1);
     }
 
@@ -33,9 +33,19 @@ fn main() -> io::Result<()> {
         program.push(n);
     }
 
-    let mut lmc = LittleManVirtualMachine::new()
-        .with_program(&program, 0)
-        .unwrap();
+    let mut lmc = if args.len() > 2 {
+        let remaining_args: Vec<i16> = args[2..].iter()
+            .map(|arg| arg.parse::<i16>().unwrap())
+            .collect();
+        LittleManVirtualMachine::new()
+            .with_input(&remaining_args)
+            .with_program(&program, 0)
+            .unwrap()
+    } else {
+        LittleManVirtualMachine::new()
+            .with_program(&program, 0)
+            .unwrap()
+    };
 
     loop {
         match lmc.execute_one() {

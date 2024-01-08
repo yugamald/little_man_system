@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "little_man_assembler",
     "little_man_vm",
 ]
 

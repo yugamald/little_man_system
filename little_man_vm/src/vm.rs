@@ -44,44 +44,44 @@ impl LittleManVirtualMachine {
 
         match instruction {
             000 => return Ok(true),
-            1__ => {
+            100..=199 => {
                 let mailbox_idx = instruction - 100;
                 let mailbox_value = self.mailboxes[mailbox_idx as usize];
                 self.acc += mailbox_value;
                 self.check_acc()?;
                 self.set_flags();
             },
-            2__ => {
+            200..=299 => {
                 let mailbox_idx = instruction - 200;
                 let mailbox_value = self.mailboxes[mailbox_idx as usize];
                 self.acc -= mailbox_value;
                 self.check_acc()?;
                 self.set_flags();
             },
-            3__ => {
+            300..=399 => {
                 let mailbox_idx = instruction - 300;
                 self.mailboxes[mailbox_idx as usize] = self.acc;
             },
-            4__ => {
+            400..=499 => {
                 let mailbox_idx = instruction - 400;
                 self.mailboxes[mailbox_idx as usize] = self.acc % 100;
             },
-            5__ => {
+            500..=599 => {
                 let mailbox_idx = instruction - 500;
                 self.acc = self.mailboxes[mailbox_idx as usize];
                 self.check_acc()?;
                 self.set_flags();
             },
-            6__ => {
+            600..=699 => {
                 self.ic = (instruction - 600) as usize;
             },
-            7__ => {
+            700..=799 => {
                 let new_ic = instruction - 700;
                 if self.zero {
                     self.ic = new_ic as usize;
                 }
             },
-            8__ => {
+            800..=899 => {
                 let new_ic = instruction - 800;
                 if self.positive {
                     self.ic = new_ic as usize;
@@ -108,11 +108,14 @@ impl LittleManVirtualMachine {
         Ok(false)
     }
 
-    // /// Loads an input into self
-    // pub fn with_input(mut self, input: VecDeque<i16>) -> LittleManVirtualMachine {
-    //     self.input = input;
-    //     self
-    // }
+    /// Loads an input into self
+    pub fn with_input(mut self, input: &[i16]) -> LittleManVirtualMachine {
+        for item in input {
+            self.input.push_front(*item);
+        }
+        self.input.push_front(0);
+        self
+    }
 
     /// Loads the mailboxes with values in `program` at index `at`
     pub fn with_program(mut self, program: &[i16], at: usize) -> Result<LittleManVirtualMachine, LmvmError> {
